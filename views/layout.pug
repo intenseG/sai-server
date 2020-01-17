@@ -1,9 +1,13 @@
 doctype html
-html(lang="en")
+html(lang="ja")
     head
         meta(charset="utf-8")
         meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no")
+<<<<<<< HEAD
+        title BSK Server
+=======
         title Leela Zero / SAI Server
+>>>>>>> 84ed3df1a6118d4c8f53d71a4b122b7071c6c9a4
 
         link(rel="stylesheet" href="https://unpkg.com/vuetify@1.0.18/dist/vuetify.min.css" crossorigin="anonymous")
         link(rel="stylesheet" href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' crossorigin="anonymous")
@@ -13,18 +17,29 @@ html(lang="en")
         main.container
             v-app
                 v-toolbar(app dark)
+<<<<<<< HEAD
+                    v-toolbar-title BSK
+=======
                     v-toolbar-title Leela Zero / SAI
+>>>>>>> 84ed3df1a6118d4c8f53d71a4b122b7071c6c9a4
                     v-toolbar-items
                         v-btn(flat href="/home") Home
-                        v-btn(flat href="/matches") Matches
+                        v-btn(flat href="/matches-all") Matches
                         v-btn(flat href="/network-profiles") Networks
-                        v-btn(flat href="/opening") Joseki
+                        v-btn(flat href="/self-plays") SelfPlays
                     v-spacer
                     v-toolbar-items
+<<<<<<< HEAD
+                        v-btn(flat href="https://github.com/intenseG/sai") Github
+                        v-btn(flat href="https://github.com/intenseG/sai/releases") Releases
+                        v-btn(flat href="https://github.com/intenseG/sai/blob/master/FAQ.md") FAQ
+                        v-btn(flat href="https://github.com/intenseG/sai/blob/master/README.md") README
+=======
                         v-btn(flat href="https://gitlab.dec.unich.it/amato/leela-zero") Github
                         v-btn(flat href="https://gitlab.dec.unich.it/amato/leela-zero/releases") Releases
                         v-btn(flat href="https://gitlab.dec.unich.it/amato/leela-zero/blob/master/FAQ.md") FAQ
                         v-btn(flat href="https://gitlab.dec.unich.it/amato/leela-zero/blob/master/README.md") README
+>>>>>>> 84ed3df1a6118d4c8f53d71a4b122b7071c6c9a4
                 v-content
                     block content
 

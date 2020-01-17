@@ -83,10 +83,74 @@ async function get_access_logs(db, url) {
     return logs;
 }
 
+// Count IP numbers who have sent mathc or selfplay games in the last
+// timeago milliseconds
+async function count_ips(db, timeago) {
+    const res = await db.collection("games").aggregate([
+        { $limit: 1 }, // Reduce the result set to a single document.
+
+        { $project: { _id: 1 } }, // Strip all fields except the Id.
+        { $project: { _id: 0 } }, // Strip the id. The document is now empty.
+
+        // Lookup all collections to union together.
+        { $lookup: { from: "games", as: 'games', pipeline: [
+            { $match: { _id: { $gt: objectIdFromDate(Date.now() - timeago) }}},
+            { $project: { ip: 1 } },
+            { $group: { _id: "$ip" }}
+        ]}},
+        { $lookup: { from: "match_games", as: 'match_games', pipeline: [
+            { $match: { _id: { $gt: objectIdFromDate(Date.now() - timeago) }}},
+            { $project: { ip: 1 } },
+            { $group: { _id: "$ip" }}
+        ]}},
+
+        // Merge the collections together.
+        {
+            $project:
+            {
+            Union: { $concatArrays: ["$games", "$match_games"] }
+            }
+        },
+
+        { $unwind: "$Union" }, // Unwind the union collection into a result set.
+        { $replaceRoot: { newRoot: "$Union" } }, // Replace the root to cleanup the resulting documents.
+
+        { $group: { _id: "$_id" }}, // remove further duplicates between the two collection
+        { $count: "ips" } // count result
+    ]).toArray();
+    return (res.length == 0) ? 0 : res[0].ips;
+}
+
+async function leaderboard(db, timeago = null) {
+    const pipeline = timeago === null
+        ? [ { $group: { _id: "$username", count: { $sum: 1 } } } ]
+        : [ { $match: { _id: { $gt: objectIdFromDate(Date.now() - timeago) } } }, 
+            { $group: { _id: "$username", count: { $sum: 1 } } } ];
+    const index = timeago === null
+        ? { username: 1 }
+        : { _id: 1, username: 1 };
+    const games = await Promise.all([
+        db.collection("games").aggregate(pipeline).hint(index).toArray(),
+        db.collection("match_games").aggregate(pipeline).hint(index).toArray()
+    ]);
+    let dict = new Map();
+    games[0].forEach( item => {
+        dict[item._id] = { username: item._id, games: item.count, match_games: 0, total_games: item.count };
+    });
+    games[1].forEach( item => {
+        if (! (item._id in dict)) dict[item._id] = { username: item._id, games: 0 };
+        dict[item._id]["match_games"] = item.count;
+        dict[item._id]["total_games"] = dict[item._id]["games"] + item.count;
+    });
+    return dict;
+};
+
 module.exports = {
     get_matches_from_db,
     get_matches_from_cache,
     update_matches_stats_cache,
     clear_matches_cache,
-    get_access_logs
+    get_access_logs,
+    count_ips,
+    leaderboard
 };

@@ -38,7 +38,11 @@ Your project folder should look like this
 
 # License
 
+<<<<<<< HEAD
 The code is released under the AGPLv3 or later.
+=======
+The code is released under the AGPLv3 or later. See the [LICENSE](LICENSE) file for details.
+>>>>>>> 84ed3df1a6118d4c8f53d71a4b122b7071c6c9a4
 
 # How to run the server
 
@@ -138,7 +142,11 @@ First of all, install both `nodejs` and `mongodb`. The version of `nodejs` avail
 # API and inner working
 
 This is a very brief documentation of the web API of the server.
+<<<<<<< HEAD
 - `/best-network-hask`: returns two rows: the first one is the hash of the network in `network/best-network.gz`, the second one contains the number `11` (why?).
+=======
+- `/best-network-hash`: returns two rows: the first one is the hash of the network in `network/best-network.gz`, the second one contains the number `11` (why?).
+>>>>>>> 84ed3df1a6118d4c8f53d71a4b122b7071c6c9a4
 - `/best-network`: returns the best network with filename `best-network.gz`. The file is actually retrieved by the network directory, using as a name the hash of the best network with an added `.gz` extension. This was used by `autogtp` in the past, but now `autogtp` directly downloads the network from the `network` directory (which, in production, is served by `nginx`).
 - `/best-network-chunk`: returns the chunks for the current best network or for the one selected with the optional `hash` parameter.
 - `/promote`: promote the network specified in the `hash` paramter as best network.
@@ -211,3 +219,19 @@ curl -F 'weights=@<network-file>' -F 'training_count=0' -F 'training_steps=80000
 ```
 curl -F 'network1=<network-hash>' -F 'key=<password>'  <server-url>/request-match
 ```
+<<<<<<< HEAD
+=======
+
+# Optional nginx configuration 
+
+## Serve network files via nginx instead of node.js for higher performance
+
+```
+   location /networks {
+        fancyindex on;
+        fancyindex_default_sort date_desc;
+        alias /home/jroy/code/leela-zero-server/network;
+    }
+```
+
+>>>>>>> 84ed3df1a6118d4c8f53d71a4b122b7071c6c9a4

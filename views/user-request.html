@@ -1,0 +1,38 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="Shift_JIS">
+    <title>BSK Server</title>
+  </head>
+  <body>
+    <h1>ユーザー登録</h1>
+    <p>
+      BSKの自己対戦データ提出に使用するユーザー名とパスワードを入力してください。
+      また、アカウントを有効にするための確認コードを受け取る有効なメールアドレスを入力する必要があります。
+      コンピューターごとに異なるアカウントを作成することをオススメします。
+      同じメールアドレスを複数のアカウントに使用することができます。
+    </p>
+    <p>
+      ユーザー名はBSKサーバーのWebページで公開されています。ご注意ください。
+      さらに、現時点ではHTTPSを使用していないため、パスワードは平文でやり取りされます。
+      普段から使っているパスワードで登録しないようにしてください。
+    </p>
+    <p><b>このパスワードを他のサービスに再利用しないでください。</b></p>
+    <form action="" method="post">
+      <p></p>
+      <label for="username">ユーザー名　　 : &nbsp;</label>
+      <input id="username" type="text" name="username" autocomplete="username">
+      <p></p>
+      <label for="email">メールアドレス : &nbsp;</label>
+      <input id="email" type="email" name="email" autocomplete="email">
+      <p></p>
+      <label for="password">パスワード　　 : &nbsp;</label>
+      <input id="password" type="password" name="password"><span>&emsp;</span>
+      <label for="password2">パスワード(確認用): &nbsp;</label>
+      <input id="password2" type="password" name="password2">
+      <p></p>
+      <button type="submit">登録する</button>
+    </form>
+  </body>
+</html>

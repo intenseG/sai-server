@@ -1,4 +1,4 @@
-(function(){
+(function() {
   var cleanNumber = function(i) {
     return i.replace(/[^\-?0-9.]/g, '');
   },

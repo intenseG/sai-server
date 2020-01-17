@@ -174,7 +174,7 @@ function seed_from_mongolong(seed) {
  */
 function process_games_list(list, ip, winner = "") {
     const ipMap = new Map();
-    let wins = 0;
+    let wins = 0.0;
     list.forEach((item, index) => {
         if (!ipMap.has(item.ip)) {
             ipMap.set(item.ip, item.ip == ip ? "you" : ipMap.size + 1);
@@ -183,7 +183,7 @@ function process_games_list(list, ip, winner = "") {
         item.ip = ipMap.get(item.ip);
 
         // Update win rate stats from games so far
-        wins += item.winnerhash == winner;
+        wins += (item.score == "0" ? 0.5 : ( item.winnerhash == winner ));
         item.num = index + 1;
         item.winrate = (wins / item.num * 100).toFixed(2);
 
@@ -229,7 +229,7 @@ function log_memory_stats(string) {
 //SPRT
 //
 function LL(x) {
-    return 1 / (1 + 10 ** (-x / 400));
+    return 1 / (1 + 10 ** (-x / 200));
 }
 
 function LLR(W, L, elo0, elo1) {
@@ -283,14 +283,14 @@ function canReachLimit(w, l, max, aim) {
 }
 
 function SPRT(w, l) {
-    const max = 400;
+    const max = 200;
     const aim = max / 2 + 2 * stDev(max);
     if (w + l >= max && w / (w + l) >= (aim / max)) return true;
     if (!canReachLimit(w, l, max, aim)) return false;
     return SPRTold(w, l);
 }
 
-const QUEUE_BUFFER = 25;
+const QUEUE_BUFFER = 20;
 
 function how_many_games_to_queue(max_games, w_obs, l_obs, pessimistic_rate, isBest, no_early_fail) {
     const games_left = max_games - w_obs - l_obs;

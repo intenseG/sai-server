@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <script src="/static/tablesort/tablesort.js"></script>
+    <script src="/static/tablesort/tablesort.number.js"></script>
+    <link href="/static/tablesort/tablesort.css" rel="stylesheet">
+  </head>
+  <body>
+    <table id="sort" border="1">
+      <thead>
+        <tr>
+          <th>Game</th>
+          <th>Win Rate</th>
+          <th>Match Hash</th>
+          <th>Winner</th>
+          <th>Score</th>
+          <th>Move Count</th>
+          <th>Duration</th>
+          <th>Download</th>
+          <th>Client</th>
+          <th>Version</th>
+          <th>Computer</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <script>
+      Tablesort.extend('minutes', item => /minutes/.test(item), (a, b) => {
+          a = (a.match(/([.\d]+) minutes/) || [])[1] || 0;
+          b = (b.match(/([.\d]+) minutes/) || [])[1] || 0;
+          return b - a;
+      });
+      Tablesort.extend('score', function(item) {
+          return item.match(/(?:b|w)+([\d.]+|resign)/i);
+      }, function(a, b) {
+          return (a.match(/(?:b|w)+([\d.]+)/i) ? RegExp.$1 : 0)
+              - (b.match(/(?:b|w)+([\d.]+)/i) ? RegExp.$1 : 0);
+      });
+      new Tablesort(document.getElementById('sort'));
+    </script>
+  </body>
+</html>

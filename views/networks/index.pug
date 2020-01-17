@@ -1,7 +1,11 @@
 extends ../layout.pug
 
 block meta
+<<<<<<< HEAD
+    meta(property="og:title" content=`BSK Best Networks`)
+=======
     meta(property="og:title" content=`Leela Zero / SAI Best Networks`)
+>>>>>>> 84ed3df1a6118d4c8f53d71a4b122b7071c6c9a4
     meta(property="og:type" content="website")
     meta(property="og:url" content=`${http_host}/network-profiles`)
 
@@ -33,7 +37,7 @@ block content
                             th Download
                     template(slot="items"  slot-scope="props")
                         tr
-                            td LZ{{ networks.length - props.index - 1 }}
+                            td BSK{{ networks.length - props.index - 1 }}
                             td {{ props.item.time | timeAgo }}
                             td
                                 a(:href="`/network-profiles/${props.item.hash}`") {{ props.item.hash.slice(0, 8) }}

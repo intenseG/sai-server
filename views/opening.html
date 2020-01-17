@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>BSK Server</title>
+    <link rel="stylesheet" href="https://unpkg.com/vuetify@1.0.18/dist/vuetify.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons" crossorigin="anonymous">
+  </head>
+  <body>
+    <main class="container">
+      <v-app>
+        <v-toolbar app dark>
+          <v-toolbar-title>BSK</v-toolbar-title>
+          <v-toolbar-items>
+            <v-btn flat href="/">Home</v-btn>
+            <v-btn flat href="/matches">Matches</v-btn>
+            <v-btn flat href="/network-profiles">Networks</v-btn>
+            <v-btn flat href="/opening">Joseki</v-btn>
+          </v-toolbar-items>
+          <v-spacer></v-spacer>
+          <v-toolbar-items>
+            <v-btn flat href="https://github.com/intenseG/sai">Github</v-btn>
+            <v-btn flat href="https://github.com/intenseG/sai/releases">Releases</v-btn>
+            <v-btn flat href="https://github.com/intenseG/sai/blob/master/FAQ.md">FAQ</v-btn>
+            <v-btn flat href="https://github.com/intenseG/sai/blob/master/README.md">README</v-btn>
+          </v-toolbar-items>
+        </v-toolbar>
+        <v-content>
+          <v-container grid-list-md text-xs-left>
+            <v-layout row>
+              <v-flex xs12>
+                <h1>Leela Zero Joseki Analysis</h1>
+                <p>Total 440,664 match games as of 2018-Jul-26</p>
+                <v-tabs v-model="start">
+                  <v-tab v-for="tab in tabs" :href="`/opening/${tab}`" :key="tab">{{ `${tab[0]}-${tab[1]} Point` }}</v-tab>
+                </v-tabs>
+              </v-flex>
+            </v-layout>
+            <v-layout v-for="opening in top10" row>
+              <v-flex xs6>
+                <v-card>
+                  <v-card-text>
+                    <h1>Joseki {{ opening._id.slice(0,6) }}</h1>
+                    <div class="player" :data-wgo="opening.sgf" data-wgo-move="20" data-wgo-enablewheel="false"></div>
+                  </v-card-text>
+                </v-card>
+              </v-flex>
+              <v-flex xs6>
+                <div class="chart w-100" ref="chartNodes" style="height: 100%;min-height:300px"></div>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-content>
+      </v-app>
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.min.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vuetify@1.0.18/dist/vuetify.min.js" crossorigin="anonymous"></script>
+    <script>
+      function nFormatter(num, digits) {
+          var si = [
+              { value: 1, symbol: "" },
+              { value: 1E3, symbol: "K" },
+              { value: 1E6, symbol: "M" },
+              { value: 1E9, symbol: "G" },
+              { value: 1E12, symbol: "T" },
+              { value: 1E15, symbol: "P" },
+              { value: 1E18, symbol: "E" }
+          ];
+          var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+          var i;
+          for (i = si.length - 1; i > 0; i--) {
+              if (num >= si[i].value) {
+              break;
+              }
+          }
+          return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
+      }
+      Vue.filter('timeAgo', function(value) {
+          var epoch = +value, delta = Date.now() - epoch;
+      
+          if(delta > 60 * 60 * 24 * 1000) {
+              let date = new Date(epoch);
+              return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+          } else {
+              return deltaToAgo(delta);
+          }
+      })
+      Vue.filter('abbr', nFormatter)
+    </script>
+    <script src="/static/wgo/wgo.min.js"></script>
+    <script src="/static/wgo/wgo.player.min.js"></script>
+    <link rel="stylesheet" href="/static/wgo/wgo.player.css">
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+      var app = new Vue({
+          el: 'main',
+          data: {
+              top10: "",
+              start: "",
+              tabs: ["44", "43", "33"],
+          },
+          mounted() {
+              google.charts.load('current', {'packages':['corechart']});
+              google.charts.setOnLoadCallback(this.drawChart);
+          },
+          methods: {
+              drawChart() {
+                  this.$refs.chartNodes.forEach((node, index) => {
+                      var data = new google.visualization.DataTable();
+                      data.addColumn('number', 'Network by Training #'); // Implicit domain label col.
+                      data.addColumn('number', 'Frequency'); // Implicit series 1 data col.
+                      data.addColumn({type: 'string', role: 'tooltip', 'p' : { html : true }});
+                      data.addRows(this.top10[index].chart);
+      
+                      var options = {
+                          title: `Seen total ${this.top10[index].count} times`,
+                          hAxis: {title: 'Networks by Training #', viewWindow: { min: 0, max: 8265319} },
+                          vAxis: {title: 'Frequency'},
+                          tooltip: {isHtml: true},
+                          legend: { position : 'none'},
+                      }
+      
+                      var chart = new google.visualization.ScatterChart(node);
+      
+                      chart.draw(data, options);
+                  });
+              },
+          }
+      })
+      
+      
+    </script>
+  </body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>BSK Server</title>
+    <link rel="stylesheet" href="https://unpkg.com/vuetify@1.0.18/dist/vuetify.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons" crossorigin="anonymous">
+    <meta property="og:title" content="bsk">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="undefined/network-profiles/bsk">
+    <meta property="og:image" content="undefined/static/networks/bsk.png">
+  </head>
+  <body>
+    <main class="container">
+      <v-app>
+        <v-toolbar app dark>
+          <v-toolbar-title>BSK</v-toolbar-title>
+          <v-toolbar-items>
+            <v-btn flat href="/">Home</v-btn>
+            <v-btn flat href="/matches">Matches</v-btn>
+            <v-btn flat href="/network-profiles">Networks</v-btn>
+          </v-toolbar-items>
+          <v-spacer></v-spacer>
+          <v-toolbar-items>
+            <v-btn flat href="https://github.com/intenseG/sai">Github</v-btn>
+            <v-btn flat href="https://github.com/intenseG/sai/releases">Releases</v-btn>
+            <v-btn flat href="https://github.com/intenseG/sai/blob/master/FAQ.md">FAQ</v-btn>
+            <v-btn flat href="https://github.com/intenseG/sai/blob/master/README.md">README</v-btn>
+          </v-toolbar-items>
+        </v-toolbar>
+        <v-content>
+          <v-container grid-list-md text-xs-center>
+            <v-layout row wrap>
+              <v-flex xs3>
+                <v-card>
+                  <v-card-media src="undefined/static/networks/bsk.png" height="200"></v-card-media>
+                  <v-card-text>
+                    <h2 class="text-center">
+                      <div class="green">LZ0</div><b>bsk </b>
+                    </h2><a class="btn btn-light btn-block border-dark" href="undefined/networks/bsk.gz">Download</a>
+                    <v-list two-line>
+                      <v-list-tile>
+                        <v-list-tile-content>
+                          <v-list-tile-sub-title>Architecture</v-list-tile-sub-title>
+                          <v-list-tile-title class="text-xs-right">20x256</v-list-tile-title>
+                        </v-list-tile-content>
+                      </v-list-tile>
+                      <v-list-tile>
+                        <v-list-tile-content>
+                          <v-list-tile-sub-title>Training</v-list-tile-sub-title>
+                          <v-list-tile-title class="text-xs-right">0 </v-list-tile-title>
+                        </v-list-tile-content>
+                      </v-list-tile>
+                      <v-list-tile>
+                        <v-list-tile-content>
+                          <v-list-tile-sub-title>Since</v-list-tile-sub-title>
+                          <v-list-tile-title class="text-xs-right">2019-10-24 17:33:17 2019-10-24 17:33:17</v-list-tile-title>
+                        </v-list-tile-content>
+                      </v-list-tile>
+                      <v-list-tile>0</v-list-tile>
+                    </v-list>
+                  </v-card-text>
+                </v-card>
+              </v-flex>
+              <v-flex xs9>
+                <v-tabs>
+                  <v-tab href="/network-profiles/bsk/matches">Match Games</v-tab>
+                </v-tabs>
+                <div class="ml-3 text-xs-left">(*) Times are displayed in {{ timezone }} time zone</div>
+                <v-data-table :items="matches" item-key="_id" hide-actions>
+                  <template slot="headers" slot-scope="props">
+                    <tr>
+                      <th>Uploaded(*)</th>
+                      <th>Network Hashes</th>
+                      <th>Result</th>
+                      <th>Games</th>
+                      <th>SPRT</th>
+                    </tr>
+                  </template>
+                  <template slot="items" slot-scope="props">
+                    <tr>
+                      <td class="time-ago">{{ props.item.time | timeAgo }}</td>
+                      <td>
+                        <v-tooltip top>
+                          <v-btn slot="activator" flat small :href="`/network-profiles/${props.item.network1.hash}`" style="min-width: 0; text-transform: lowercase;">{{ props.item.network1.hash.slice(0, 8) }}</v-btn><span>{{ props.item.network1.training_count | abbr(4) }} +{{ props.item.network1.training_steps | abbr(3)}}</span>
+                        </v-tooltip>
+                        <v-tooltip top>
+                          <v-btn slot="activator" flat small :href="`/match-games/${props.item._id}`" style="min-width: 0;">VS</v-btn><span>{{ props.item.is_test ? "Test Match" : "Regular Match" }}</span>
+                        </v-tooltip>
+                        <v-tooltip top>
+                          <v-btn slot="activator" flat small :href="`/network-profiles/${props.item.network2.hash}`" style="min-width: 0; text-transform: lowercase;">{{ props.item.network2.hash.slice(0, 8) }}</v-btn><span>{{ props.item.network2.training_count | abbr(4) }} +{{ props.item.network2.training_steps | abbr(3)}}</span>
+                        </v-tooltip>
+                      </td>
+                      <td>{{ props.item.network1_wins }} : {{ props.item.network1_losses }} ({{ props.item.winrate }}%)</td>
+                      <td>{{ `${props.item.network1_wins + props.item.network1_losses} / ${props.item.number_to_play}` }}</td>
+                      <td><span class="caption" v-if="props.item.SPRT === true || props.item.SPRT === false" :class="props.item.SPRT ? 'green white--text pa-1' : 'black white--text pa-1'"><b>{{ props.item.SPRT ? 'Pass' : 'Failed' }}</b></span>
+                        <v-progress-linear v-else v-model="props.item.SPRT"></v-progress-linear>
+                      </td>
+                    </tr>
+                  </template>
+                </v-data-table>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-content>
+      </v-app>
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.min.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vuetify@1.0.18/dist/vuetify.min.js" crossorigin="anonymous"></script>
+    <script>
+      function nFormatter(num, digits) {
+          var si = [
+              { value: 1, symbol: "" },
+              { value: 1E3, symbol: "K" },
+              { value: 1E6, symbol: "M" },
+              { value: 1E9, symbol: "G" },
+              { value: 1E12, symbol: "T" },
+              { value: 1E15, symbol: "P" },
+              { value: 1E18, symbol: "E" }
+          ];
+          var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+          var i;
+          for (i = si.length - 1; i > 0; i--) {
+              if (num >= si[i].value) {
+              break;
+              }
+          }
+          return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
+      }
+      Vue.filter('timeAgo', function(value) {
+          var epoch = +value, delta = Date.now() - epoch;
+      
+          if(delta > 60 * 60 * 24 * 1000) {
+              let date = new Date(epoch);
+              return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+          } else {
+              return deltaToAgo(delta);
+          }
+      })
+      Vue.filter('abbr', nFormatter)
+    </script>
+    <script src="/static/timeago.js"></script>
+    <script>
+      var app = new Vue({
+          el: 'main',
+          data: {
+              timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+              matches: "",
+          }
+      })
+      
+    </script>
+  </body>
+</html>

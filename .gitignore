@@ -6,8 +6,15 @@ network
 static/rss.xml
 static/networks/
 logs/*
+rem
 network
 npm-debug.log
 config.ini
-configsai.js
+configbsk.js
+match_data.json
+input_data/
+server_sgf/
+*.sh
+*.txt
+*.py
 *~

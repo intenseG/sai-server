@@ -1,0 +1,33 @@
+
+<v-data-table :items="matches" item-key="_id" hide-actions="hide-actions">
+  <template slot="headers" slot-scope="props">
+    <tr>
+      <th>Uploaded(*)</th>
+      <th>Network Hashes</th>
+      <th>Result</th>
+      <th>Games</th>
+      <th>SPRT</th>
+    </tr>
+  </template>
+  <template slot="items" slot-scope="props">
+    <tr>
+      <td class="time-ago">{{ props.item.time | timeAgo }}</td>
+      <td>
+        <v-tooltip top="top">
+          <v-btn slot="activator" flat="flat" small="small" :href="`/network-profiles/${props.item.network1.hash}`" style="min-width: 0; text-transform: lowercase;">{{ props.item.network1.hash.slice(0, 8) }}</v-btn><span>{{ props.item.network1.training_count | abbr(4) }} +{{ props.item.network1.training_steps | abbr(3)}}</span>
+        </v-tooltip>
+        <v-tooltip top="top">
+          <v-btn slot="activator" flat="flat" small="small" :href="`/match-games/${props.item._id}`" style="min-width: 0;">VS</v-btn><span>{{ props.item.is_test ? "Test Match" : "Regular Match" }}</span>
+        </v-tooltip>
+        <v-tooltip top="top">
+          <v-btn slot="activator" flat="flat" small="small" :href="`/network-profiles/${props.item.network2.hash}`" style="min-width: 0; text-transform: lowercase;">{{ props.item.network2.hash.slice(0, 8) }}</v-btn><span>{{ props.item.network2.training_count | abbr(4) }} +{{ props.item.network2.training_steps | abbr(3)}}</span>
+        </v-tooltip>
+      </td>
+      <td>{{ props.item.network1_wins }} : {{ props.item.network1_losses }} ({{ props.item.winrate }}%)</td>
+      <td>{{ `${props.item.network1_wins + props.item.network1_losses} / ${props.item.number_to_play}` }}</td>
+      <td><span class="caption" v-if="props.item.SPRT === true || props.item.SPRT === false" :class="props.item.SPRT ? 'green white--text pa-1' : 'black white--text pa-1'"><b>{{ props.item.SPRT ? 'Pass' : 'Failed' }}</b></span>
+        <v-progress-linear v-else="v-else" v-model="props.item.SPRT"></v-progress-linear>
+      </td>
+    </tr>
+  </template>
+</v-data-table>
